@@ -6,7 +6,7 @@ const MonitoringTaskTopic = process.env.MonitoringTaskTopic;
 export const publishMonitoringTask = async (
   monitoringTask: MonitoringTask
 ): Promise<string> => {
-  console.log('publishMonitoringTask = ', monitoringTask);
+  console.debug('publishMonitoringTask = ', monitoringTask);
 
   const result = await CommonSNS.publish({
     TopicArn: MonitoringTaskTopic,

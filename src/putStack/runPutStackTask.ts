@@ -3,11 +3,11 @@ import { PutStackTask } from './putStackTask';
 type PutStackMode = 'create' | 'update' | 'recreate';
 const getPutStackMode = async (stackName: string): Promise<PutStackMode> => {
   try {
-    console.log('Looking up ', stackName);
+    console.debug('Looking up ', stackName);
     const stacks = await CommonCloudFormation.describeStacks({
       StackName: stackName,
     }).promise();
-    console.log('stacks = ', stacks);
+    console.debug('stacks = ', stacks);
     if (stacks.Stacks.length < 1) {
       return 'create';
     }

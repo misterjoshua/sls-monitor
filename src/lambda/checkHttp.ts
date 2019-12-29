@@ -27,7 +27,7 @@ export const checkHttpSubscriber: SNSHandler = async (event: SNSEvent) => {
       const task = parseMonitoringTask(record);
       const result = await runMonitoringTask(task);
 
-      console.log(
+      console.debug(
         task,
         result.successfulTransport,
         result.successfulContentCheck,

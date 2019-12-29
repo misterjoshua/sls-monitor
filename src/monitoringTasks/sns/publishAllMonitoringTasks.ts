@@ -2,7 +2,7 @@ import { getMonitoringTasks, publishMonitoringTask } from '..';
 
 export const publishAllMonitoringTasks = async (): Promise<object[]> => {
   const monitoringTasks = await getMonitoringTasks();
-  console.log('publishAllMonitoringTasks monitoringTasks = ', monitoringTasks);
+  console.debug('publishAllMonitoringTasks monitoringTasks = ', monitoringTasks);
 
   const publishRecords = await Promise.all(
     monitoringTasks.map(async monitoringTask => ({

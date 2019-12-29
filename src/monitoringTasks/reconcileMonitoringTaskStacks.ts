@@ -37,7 +37,7 @@ const putMonitoringTaskStacks = async (
     template.Resources[`Alarm${i}`] = createAlarm(task, i);
   });
 
-  console.log(template);
+  console.debug(template);
 
   const putStackTaskId = await putStackTask(
     `${ResourceUniqueString}-monitoring-tasks-stack`,

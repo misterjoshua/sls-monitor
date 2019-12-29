@@ -8,7 +8,7 @@ export const taskQueueWorker: SQSHandler = async (
   await Promise.all(
     event.Records.map(async record => {
       const task = parsePutStackTask(record.body);
-      console.log('task = ', task);
+      console.debug('task = ', task);
       await runPutStackTask(task);
     })
   );

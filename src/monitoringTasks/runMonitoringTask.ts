@@ -11,7 +11,7 @@ import { createDimensions, createMetricData } from '../cloudwatch';
 export const runMonitoringTask = async (
   task: MonitoringTask
 ): Promise<HttpCheckResult> => {
-  console.log('Monitoring ', task);
+  console.debug('Monitoring ', task);
 
   const checkResult = await checkHttp(
     task.url,
@@ -19,16 +19,16 @@ export const runMonitoringTask = async (
   );
 
   const dimensions = createDimensions(task);
-  console.log('dimensions = ', dimensions);
+  console.debug('dimensions = ', dimensions);
 
   const metricData: PutMetricDataInput = {
     Namespace: 'misterjoshua/monitor',
     MetricData: createMetricData(dimensions, checkResult),
   };
-  console.log('metricData = ', metricData);
+  console.debug('metricData = ', metricData);
 
   const putResult = await CommonCloudWatch.putMetricData(metricData).promise();
-  console.log('putResult = ', putResult);
+  console.debug('putResult = ', putResult);
 
   return checkResult;
 };
