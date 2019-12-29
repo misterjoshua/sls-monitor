@@ -13,6 +13,7 @@ export const runMonitoringTask = async (
 ): Promise<HttpCheckResult> => {
   console.debug('Monitoring ', task);
 
+  // Check the task url
   const checkResult = await checkHttp(
     task.url,
     checkHttpSuccessAnd(regexpCheck(new RegExp(task.checkExpression)))

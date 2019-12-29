@@ -1,0 +1,41 @@
+provider:
+  iamRoleStatements:
+    - Effect: Allow
+      Action: 'cloudwatch:PutMetricData'
+      Resource: '*'
+    - Effect: Allow
+      Action: 'sns:*'
+      Resource:
+        - !Ref MonitoringTaskTopic
+
+  environment:
+    MonitoringTaskTopic: !Ref MonitoringTaskTopic
+
+functions:
+  CheckHttpApi:
+    handler: src/checkHttp/lambda.restApi
+    events:
+      - http:
+          path: /check/http
+          method: any
+
+  CheckHttpSchedule:
+    handler: src/checkHttp/lambda.scheduleWorker
+    events:
+      - schedule: rate(2 minutes)
+
+  CheckHttpWorker:
+    handler: src/checkHttp/lambda.snsWorker
+    events:
+      - sns:
+          arn: !Ref MonitoringTaskTopic
+          topicName: ${self:service}-${self:provider.stage}-MonitoringTaskTopic
+          # XXX: Doesn't work:
+          # topicName: !GetAtt MonitoringTaskTopic.TopicName
+
+resources:
+  Resources:
+    MonitoringTaskTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:service}-${self:provider.stage}-MonitoringTaskTopic

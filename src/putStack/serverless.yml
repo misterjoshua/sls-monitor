@@ -1,0 +1,32 @@
+provider:
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - 'cloudformation:*'
+        - 'cloudwatch:*'
+      Resource: '*'
+    - Effect: Allow
+      Action: 'sqs:*'
+      Resource: !GetAtt PutStackTaskQueue.Arn
+
+  environment:
+    PutStackTaskQueue: !Ref PutStackTaskQueue
+
+functions:
+  PutStackTaskQueueWorker:
+    handler: src/putStack/lambda.taskWorker
+    events:
+      - sqs:
+          arn: !GetAtt PutStackTaskQueue.Arn
+
+resources:
+  Resources:
+    PutStackTaskQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        RedrivePolicy:
+          deadLetterTargetArn: !GetAtt DeadLetters.Arn
+          maxReceiveCount: 2
+
+    DeadLetters:
+      Type: AWS::SQS::Queue

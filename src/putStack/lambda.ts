@@ -1,11 +1,11 @@
 import { SQSHandler, SQSEvent } from 'aws-lambda';
-import { parsePutStackTask } from '../putStack/putStackTask';
-import { runPutStackTask } from '../putStack/runPutStackTask';
+import { parsePutStackTask } from './putStackTask';
+import { runPutStackTask } from './runPutStackTask';
 import { bindLogPrefixes } from '../bindLogPrefixes';
 
 bindLogPrefixes();
 
-export const taskQueueWorker: SQSHandler = async (
+export const taskWorker: SQSHandler = async (
   event: SQSEvent
 ): Promise<void> => {
   await Promise.all(
