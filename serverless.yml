@@ -1,0 +1,127 @@
+service:
+  name: monitor
+
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+    excludeFiles: src/**/*.test.ts
+
+# Add the serverless-webpack plugin
+plugins:
+  - serverless-webpack
+  # - serverless-glob-merge-yaml
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  memorySize: 256
+  timeout: 5
+  apiGateway:
+    minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
+  tracing:
+    lambda: true
+    apiGateway: true
+  iamRoleStatements:
+    - Effect: Allow
+      Action: 'cloudwatch:PutMetricData'
+      Resource: '*'
+    - Effect: Allow
+      Action: 'sns:*'
+      Resource:
+        - !Ref MonitoringTaskTopic
+    - Effect: Allow
+      Action:
+        - 'cloudformation:*'
+        - 'cloudwatch:*'
+      Resource: '*'
+    - Effect: Allow
+      Action: 'sqs:*'
+      Resource: !GetAtt PutStackTaskQueue.Arn
+    - Effect: Allow
+      Action: 'dynamodb:*'
+      Resource: !GetAtt MonitoringTasksTable.Arn
+  environment:
+    MonitoringTasksTable: !Ref MonitoringTasksTable
+    MonitoringTaskTopic: !Ref MonitoringTaskTopic
+    PutStackTaskQueue: !Ref PutStackTaskQueue
+    ResourcePrefix: '${self:service}-${self:provider.stage}'
+    MonitoringAlertsTopicExportName: '${self:service}-${self:provider.stage}-MonitoringAlertsTopic'
+
+functions:
+  CheckHttpApi:
+    handler: src/lambda/checkHttp.checkHttpApi
+    events:
+      - http:
+          path: /check/http
+          method: any
+
+  CheckHttpSchedule:
+    handler: src/lambda/checkHttp.checkHttpSchedule
+    events:
+      - schedule: rate(2 minutes)
+
+  CheckHttpSubscriber:
+    handler: src/lambda/checkHttp.checkHttpSubscriber
+    events:
+      - sns:
+          arn: !Ref MonitoringTaskTopic
+          topicName: ${self:service}-${self:provider.stage}-MonitoringTaskTopic
+          # XXX: Doesn't work:
+          # topicName: !GetAtt MonitoringTaskTopic.TopicName
+
+  ReconcileMonitoringTaskStacksApi:
+    handler: src/lambda/reconcileMonitoringTaskStacks.reconcileTaskStacksApi
+    events:
+      - http:
+          path: /reconcile/taskStacks
+          method: any
+
+  ReconcileMonitoringTaskStacksSchedule:
+    handler: src/lambda/reconcileMonitoringTaskStacks.reconcileTaskStacksSchedule
+    events:
+      - schedule: rate(15 minutes)
+
+  PutStackTaskQueueWorker:
+    handler: src/lambda/putStackTask.taskQueueWorker
+    events:
+      - sqs:
+          arn: !GetAtt PutStackTaskQueue.Arn
+
+resources:
+  Resources:
+    MonitoringTasksTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: name
+            AttributeType: S
+        KeySchema:
+          - AttributeName: name
+            KeyType: HASH
+
+    MonitoringTaskTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:service}-${self:provider.stage}-MonitoringTaskTopic
+
+    MonitoringAlertsTopic:
+      Type: AWS::SNS::Topic
+
+    PutStackTaskQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        RedrivePolicy:
+          deadLetterTargetArn: !GetAtt DeadLetters.Arn
+          maxReceiveCount: 2
+
+    DeadLetters:
+      Type: AWS::SQS::Queue
+
+  Outputs:
+    MonitoringAlertsTopic:
+      Description: The monitoring alerts output in case anything goes wrong.
+      Value: !Ref MonitoringAlertsTopic
+      Export:
+        Name: '${self:service}-${self:provider.stage}-MonitoringAlertsTopic'
