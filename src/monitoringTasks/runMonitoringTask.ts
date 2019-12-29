@@ -18,17 +18,24 @@ export const runMonitoringTask = async (
     checkHttpSuccessAnd(regexpCheck(new RegExp(task.checkExpression)))
   );
 
-  const dimensions = createDimensions(task);
-  console.debug('dimensions = ', dimensions);
+  // Log the error.
+  if (checkResult.errorMessage) {
+    console.error(
+      "Check result indicates there's an error: ",
+      checkResult.errorMessage,
+      task,
+      checkResult,
+    );
+  }
 
+  // Send the metrics to cloudwatch.
+  const dimensions = createDimensions(task);
   const metricData: PutMetricDataInput = {
     Namespace: 'misterjoshua/monitor',
     MetricData: createMetricData(dimensions, checkResult),
   };
-  console.debug('metricData = ', metricData);
 
-  const putResult = await CommonCloudWatch.putMetricData(metricData).promise();
-  console.debug('putResult = ', putResult);
+  await CommonCloudWatch.putMetricData(metricData).promise();
 
   return checkResult;
 };

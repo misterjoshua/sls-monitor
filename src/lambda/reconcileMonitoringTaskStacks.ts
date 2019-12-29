@@ -4,6 +4,9 @@ import {
   SNSHandler,
 } from 'aws-lambda';
 import { reconcileMonitoringTaskStacks } from '../monitoringTasks/reconcileMonitoringTaskStacks';
+import { bindLogPrefixes } from '../bindLogPrefixes';
+
+bindLogPrefixes();
 
 export const reconcileTaskStacksApi: APIGatewayProxyHandler = async (): Promise<APIGatewayProxyResult> => {
   return {

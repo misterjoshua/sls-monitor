@@ -9,6 +9,9 @@ import {
   runMonitoringTask,
   publishAllMonitoringTasks,
 } from '../monitoringTasks';
+import { bindLogPrefixes } from '../bindLogPrefixes';
+
+bindLogPrefixes();
 
 export const checkHttpApi: APIGatewayProxyHandler = async (): Promise<APIGatewayProxyResult> => {
   return {
@@ -27,12 +30,7 @@ export const checkHttpSubscriber: SNSHandler = async (event: SNSEvent) => {
       const task = parseMonitoringTask(record);
       const result = await runMonitoringTask(task);
 
-      console.debug(
-        task,
-        result.successfulTransport,
-        result.successfulContentCheck,
-        result.transportTimings
-      );
+      console.debug(task, result);
     })
   );
 };
