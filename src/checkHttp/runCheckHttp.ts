@@ -1,14 +1,11 @@
 import { CommonCloudWatch } from '../aws';
-import { HttpCheckResult, checkHttp } from '../checkHttp/checkHttp';
-import {
-  checkHttpSuccessAnd,
-  regexpCheck,
-} from '../checkHttp/checkHttpResponse';
+import { HttpCheckResult, checkHttp } from './checkHttp';
+import { checkHttpSuccessAnd, regexpCheck } from './checkHttpResponse';
 import { PutMetricDataInput } from 'aws-sdk/clients/cloudwatch';
-import { MonitoringTask } from '.';
+import { MonitoringTask } from '../monitoringTasks';
 import { createDimensions, createMetricData } from '../cloudwatch';
 
-export const runMonitoringTask = async (
+export const runCheckHttp = async (
   task: MonitoringTask
 ): Promise<HttpCheckResult> => {
   console.debug('Monitoring ', task);
@@ -25,7 +22,7 @@ export const runMonitoringTask = async (
       "Check result indicates there's an error: ",
       checkResult.errorMessage,
       task,
-      checkResult,
+      checkResult
     );
   }
 

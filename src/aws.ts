@@ -1,13 +1,10 @@
-import AWSXRay from 'aws-xray-sdk';
-import AWS from 'aws-sdk';
+import * as AWSXRay from 'aws-xray-sdk';
+import * as AWS from 'aws-sdk';
 
 export const CommonAWS = AWSXRay.captureAWS(AWS);
 
-const region = process.env.AWS_REGION;
-export const CommonCloudWatch = new CommonAWS.CloudWatch({ region });
-export const CommonCloudWatchEvents = new CommonAWS.CloudWatchEvents({
-  region,
-});
-export const CommonSQS = new CommonAWS.SQS({ region });
-export const CommonSNS = new CommonAWS.SNS({ region });
-export const CommonCloudFormation = new CommonAWS.CloudFormation({ region });
+export const CommonCloudWatch = new CommonAWS.CloudWatch();
+export const CommonCloudWatchEvents = new CommonAWS.CloudWatchEvents();
+export const CommonSQS = new CommonAWS.SQS();
+export const CommonSNS = new CommonAWS.SNS();
+export const CommonCloudFormation = new CommonAWS.CloudFormation();

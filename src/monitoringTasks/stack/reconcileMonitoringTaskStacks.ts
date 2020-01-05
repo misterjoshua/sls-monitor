@@ -1,8 +1,7 @@
-import { getMonitoringTasks, MonitoringTask } from '..';
+import { MonitoringTask } from '..';
 import { putStackTask } from '../../putStack/putStackTask';
 import { createMonitoringStackTemplate } from './createMonitoringStackTemplate';
-
-export const ResourceUniqueString = process.env.ResourcePrefix;
+import { getMonitoringTasks } from '../dynogels';
 
 type MonitoringTaskStackResult = string[];
 
@@ -14,7 +13,7 @@ const putMonitoringTaskStacks = async (
   console.debug(template);
 
   const putStackTaskId = await putStackTask(
-    `${ResourceUniqueString}-monitoring-tasks-stack`,
+    `monitoring-tasks-stack`,
     JSON.stringify(template)
   );
 

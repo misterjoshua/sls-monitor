@@ -1,4 +1,4 @@
-import request from 'request';
+import * as request from 'request';
 import { HttpResponseCheck } from './checkHttpResponse';
 import { RequestSender, HttpCheckResult } from './checkHttp';
 

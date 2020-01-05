@@ -1,5 +1,6 @@
-import request, { OptionsWithUrl, CoreOptions } from 'request';
-import util from 'util';
+import * as request from 'request';
+import { OptionsWithUrl, CoreOptions } from 'request';
+import * as util from 'util';
 import { HttpResponseCheck } from './checkHttpResponse';
 import { doCheckHttp } from './doCheckHttp';
 

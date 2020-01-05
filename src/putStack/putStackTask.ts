@@ -1,6 +1,5 @@
 import { CommonSQS } from '../aws';
-
-const PutStackTaskQueue = process.env.PutStackTaskQueue;
+import { getPutStackTaskQueue } from '../config';
 
 export interface PutStackTask {
   stackName: string;
@@ -11,15 +10,16 @@ export const putStackTask = async (
   stackName: string,
   templateBody: string
 ): Promise<string> => {
+  console.info(`Requesting to create ${stackName}:\n`, templateBody);
   const result = await CommonSQS.sendMessage({
-    QueueUrl: PutStackTaskQueue,
+    QueueUrl: getPutStackTaskQueue(),
     MessageBody: JSON.stringify({
       stackName,
       templateBody,
     } as PutStackTask),
   }).promise();
 
-  return result.MessageId;
+  return result.MessageId || '';
 };
 
 export const parsePutStackTask = (json: string): PutStackTask =>

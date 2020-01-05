@@ -1,7 +1,6 @@
 import { CommonSNS } from '../../aws';
 import { MonitoringTask } from '../index';
-
-const MonitoringTaskTopic = process.env.MonitoringTaskTopic;
+import { getMonitoringTaskTopic } from '../../config';
 
 export const publishMonitoringTask = async (
   monitoringTask: MonitoringTask
@@ -9,7 +8,7 @@ export const publishMonitoringTask = async (
   console.debug('publishMonitoringTask = ', monitoringTask);
 
   const result = await CommonSNS.publish({
-    TopicArn: MonitoringTaskTopic,
+    TopicArn: getMonitoringTaskTopic(),
     Subject: monitoringTask.url,
     Message: JSON.stringify(monitoringTask),
   }).promise();

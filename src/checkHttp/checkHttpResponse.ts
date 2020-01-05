@@ -1,4 +1,4 @@
-import request from 'request';
+import * as request from 'request';
 
 export type HttpResponseCheck = (response: request.Response) => Promise<void>;
 

@@ -1,17 +1,18 @@
 import { MonitoringTask } from '..';
-import { ResourceUniqueString } from './reconcileMonitoringTaskStacks';
+import {
+  getMonitoringAlertsTopicExportName,
+  getResourceUniqueString,
+} from '../../config';
 
-export const MonitoringAlertsTopicExportName =
-  process.env.MonitoringAlertsTopicExportName;
-
-const slugName = (name: string, filler = 'z'): string => name.replace(/[^a-z0-9]/gi, filler);
+const slugName = (name: string, filler = 'z'): string =>
+  name.replace(/[^a-z0-9]/gi, filler);
 const resourceName = (name: string): string => 'r' + slugName(name);
 
 const createAlarm = (task: MonitoringTask): object => ({
   Type: 'AWS::CloudWatch::Alarm',
   Properties: {
-    AlarmActions: [{ 'Fn::ImportValue': MonitoringAlertsTopicExportName }],
-    AlarmName: `${slugName(task.name,'-')}-${ResourceUniqueString}`,
+    AlarmActions: [{ 'Fn::ImportValue': getMonitoringAlertsTopicExportName() }],
+    AlarmName: `${slugName(task.name, '-')}-${getResourceUniqueString()}`,
     ComparisonOperator: 'LessThanThreshold',
     DatapointsToAlarm: 2,
     Dimensions: [{ Name: 'TaskName', Value: task.name }],
@@ -32,7 +33,8 @@ export function createMonitoringStackTemplate(tasks: MonitoringTask[]): object {
   };
 
   tasks.forEach(task => {
-    template.Resources[resourceName(task.name)] = createAlarm(task);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    template.Resources[resourceName(task.name as any)] = createAlarm(task);
   });
 
   return template;

@@ -11,7 +11,8 @@ export const createMetricData = (
   ): MetricDatum => ({
     MetricName: name,
     Unit: 'Milliseconds',
-    Value: Math.round(data[name]),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    Value: Math.round(data[name as any]),
     Dimensions: dimensions,
   });
 

@@ -1,12 +1,12 @@
-import dynogels, { Item, DocumentCollection } from 'dynogels';
-import Joi from 'joi';
-import util from 'util';
+import * as dynogels from 'dynogels';
+import { Item, DocumentCollection, Document } from 'dynogels';
+import * as Joi from 'joi';
+import * as util from 'util';
 import { MonitoringTask } from '.';
-
-const MonitoringTasksTable = process.env.MonitoringTasksTable;
+import { getMonitoringTasksTable } from '../config';
 
 export const MonitoringTaskModel = dynogels.define('MonitoringTask', {
-  tableName: MonitoringTasksTable,
+  tableName: getMonitoringTasksTable(),
 
   hashKey: 'name',
   timestamps: true,
@@ -32,7 +32,7 @@ export const getMonitoringTasks = async (): Promise<MonitoringTask[]> => {
     }
   );
 
-  return collection.Items.map((item: Item) => item.get() as MonitoringTask);
+  return collection.Items.map((item: Document) => item.get() as MonitoringTask);
 };
 
 export const getMonitoringTask = util.promisify<string, Item>(
