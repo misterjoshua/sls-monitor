@@ -13,6 +13,7 @@ export interface HttpCheckResult {
   error?: Error;
 }
 
+export type HttpCheckTimingPhaseName = 'wait' | 'dns' | 'tcp' | 'firstByte' | 'download' | 'total';
 export interface HttpCheckTimingPhases {
   wait: number;
   dns: number;
