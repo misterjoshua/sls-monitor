@@ -1,6 +1,6 @@
 import * as cdk from '@aws-cdk/core';
-import * as apigateway from '@aws-cdk/aws-apigateway';
 import * as lambda from '@aws-cdk/aws-lambda';
+import * as lambdaEvents from '@aws-cdk/aws-lambda-event-sources';
 import { CommonProps } from '../../cdk/stack';
 import * as dynamodb from '@aws-cdk/aws-dynamodb';
 import * as events from '@aws-cdk/aws-events';
@@ -9,7 +9,6 @@ import * as sqs from '@aws-cdk/aws-sqs';
 import * as sns from '@aws-cdk/aws-sns';
 
 export interface MonitoringTaskProps extends CommonProps {
-  baseResource: apigateway.IResource;
   putStackTaskQueue: sqs.Queue;
   resourceUniqueString: string;
 }
@@ -42,13 +41,6 @@ export class MonitoringTask extends cdk.Construct {
       MonitoringAlertsTopicExportName: monitoringAlertsTopicExportName,
     };
 
-    // Add the checkAll api.
-
-    const restApiResource = new apigateway.Resource(this, 'CheckAllResource', {
-      parent: props.baseResource,
-      pathPart: 'check',
-    });
-
     const restApiFn = new lambda.Function(this, 'CheckAllFn', {
       handler: 'index.restApi',
       runtime: lambda.Runtime.NODEJS_12_X,
@@ -56,17 +48,12 @@ export class MonitoringTask extends cdk.Construct {
       layers: [props.baseLayer],
       environment,
       tracing: props.tracing,
+      events: [
+        new lambdaEvents.ApiEventSource("any", "/check")
+      ]
     });
     table.grantReadWriteData(restApiFn);
-    restApiResource.addMethod(
-      'any',
-      new apigateway.LambdaIntegration(restApiFn)
-    );
     props.checkTopic.grantPublish(restApiFn);
-
-    new cdk.CfnOutput(this, 'CheckAllEndpoint', {
-      value: restApiResource.url,
-    });
 
     // Add the check schedule.
 
@@ -95,26 +82,12 @@ export class MonitoringTask extends cdk.Construct {
       layers: [props.baseLayer],
       environment,
       tracing: props.tracing,
+      events: [
+        new lambdaEvents.ApiEventSource("any", "/reconcile"),
+      ]
     });
     props.putStackTaskQueue.grantSendMessages(reconcileRestApiFn);
     table.grantReadData(reconcileRestApiFn);
-
-    const reconcileRestApiResource = new apigateway.Resource(
-      this,
-      'ReconcileRestApiResource',
-      {
-        parent: props.baseResource,
-        pathPart: 'reconcile',
-      }
-    );
-    reconcileRestApiResource.addMethod(
-      'any',
-      new apigateway.LambdaIntegration(reconcileRestApiFn)
-    );
-
-    new cdk.CfnOutput(this, 'ReconcileEndpoint', {
-      value: reconcileRestApiResource.url,
-    });
 
     // Reconcile Alarms schedule
 

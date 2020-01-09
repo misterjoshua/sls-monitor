@@ -1,4 +1,4 @@
-import rollup from 'rollup';
+import * as rollup from 'rollup';
 
 export async function rollupInputOptions(
   opt: rollup.InputOptions
@@ -23,4 +23,20 @@ export async function rollupOutputOptions(
 
 export async function entriesGlob(): Promise<string> {
   return 'src/**/lambda.ts';
+}
+
+export async function jest(opt: jest.InitialOptions): Promise<jest.InitialOptions> {
+  opt.roots = [
+    "<rootDir>/cdk",
+    "<rootDir>/src",
+  ];
+
+  return opt;
+}
+
+export async function eslintPatterns(): Promise<string[]> {
+  return [
+    "./cdk/**/*.ts",
+    "./src/**/*.ts",
+  ];
 }

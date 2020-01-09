@@ -1,3 +1,0 @@
-provider:
-  environment:
-    ResourcePrefix: '${self:service}-${self:provider.stage}'

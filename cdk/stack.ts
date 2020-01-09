@@ -4,7 +4,6 @@ import * as lambda from '@aws-cdk/aws-lambda';
 import * as sns from '@aws-cdk/aws-sns';
 import * as sqs from '@aws-cdk/aws-sqs';
 import { MonitoringTask } from '../src/monitoringTasks/cdk';
-import * as apigateway from '@aws-cdk/aws-apigateway';
 import { PutStack } from '../src/putStack/cdk';
 
 export interface CommonProps {
@@ -20,8 +19,6 @@ export class Stack extends cdk.Stack {
     const baseLayer = new lambda.LayerVersion(this, 'BaseLayer', {
       code: lambda.Code.fromAsset('./dist/dependencies'),
     });
-
-    const api = new apigateway.RestApi(this, 'Api');
 
     const checkTopic = new sns.Topic(this, 'CheckTopic');
     const deadTasks = new sqs.Queue(this, 'DeadTasksQueue');
@@ -39,7 +36,7 @@ export class Stack extends cdk.Stack {
       tracing: lambda.Tracing.ACTIVE,
     };
 
-    const resourceUniqueString = 'foobar';
+    const resourceUniqueString = this.stackName;
 
     new HttpChecker(this, 'HttpChecker', commonProps);
 
@@ -51,7 +48,6 @@ export class Stack extends cdk.Stack {
 
     new MonitoringTask(this, 'MonitoringTasks', {
       ...commonProps,
-      baseResource: api.root,
       tracing: lambda.Tracing.ACTIVE,
       putStackTaskQueue,
       resourceUniqueString: resourceUniqueString,

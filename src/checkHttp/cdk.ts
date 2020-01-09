@@ -1,6 +1,6 @@
 import * as cdk from '@aws-cdk/core';
 import * as lambda from '@aws-cdk/aws-lambda';
-import * as snsSubcriptions from '@aws-cdk/aws-sns-subscriptions';
+import * as lambdaEvents from '@aws-cdk/aws-lambda-event-sources';
 import * as cloudwatch from '@aws-cdk/aws-cloudwatch';
 import { CommonProps } from '../../cdk/stack';
 
@@ -14,10 +14,10 @@ export class HttpChecker extends cdk.Construct {
       code: lambda.Code.fromAsset('./dist/src/checkHttp/lambda'),
       layers: [common.baseLayer],
       tracing: common.tracing,
+      events: [
+        new lambdaEvents.SnsEventSource(common.checkTopic)
+      ]
     });
     cloudwatch.Metric.grantPutMetricData(snsWorker);
-    common.checkTopic.addSubscription(
-      new snsSubcriptions.LambdaSubscription(snsWorker)
-    );
   }
 }
