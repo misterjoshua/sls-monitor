@@ -16,7 +16,7 @@ it('should report success on successful transport and response checks', async ()
   const checkResult = await doCheckHttp(
     createOptions(successUrl),
     successfulGetFn,
-    jest.fn()
+    jest.fn(),
   );
   expect(checkResult.errorMessage).toBeFalsy();
   expect(checkResult.successfulTransport).toBe(true);
@@ -31,7 +31,7 @@ it('should report failure when the content check fails', async () => {
   const checkResult = await doCheckHttp(
     createOptions(successUrl),
     successfulGetFn,
-    responseFailMock
+    responseFailMock,
   );
   expect(checkResult.errorMessage).toBeTruthy();
   expect(checkResult.successfulTransport).toBe(true);
@@ -44,7 +44,7 @@ it('should report failure when it cant connect to http', async () => {
   const checkResult = await doCheckHttp(
     createOptions(failTransportUrl),
     failGetFn,
-    neverMock
+    neverMock,
   );
   expect(neverMock).not.toHaveBeenCalled();
   expect(checkResult.errorMessage).toBeTruthy();

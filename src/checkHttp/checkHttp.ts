@@ -13,7 +13,13 @@ export interface HttpCheckResult {
   error?: Error;
 }
 
-export type HttpCheckTimingPhaseName = 'wait' | 'dns' | 'tcp' | 'firstByte' | 'download' | 'total';
+export type HttpCheckTimingPhaseName =
+  | 'wait'
+  | 'dns'
+  | 'tcp'
+  | 'firstByte'
+  | 'download'
+  | 'total';
 export interface HttpCheckTimingPhases {
   wait: number;
   dns: number;
@@ -24,12 +30,12 @@ export interface HttpCheckTimingPhases {
 }
 
 export type RequestSender = (
-  request: request.OptionsWithUrl
+  request: request.OptionsWithUrl,
 ) => Promise<request.Response>;
 
 export const createOptions = (
   url: string,
-  givenOptions: CoreOptions = {}
+  givenOptions: CoreOptions = {},
 ): OptionsWithUrl => {
   const defaultOptions = {
     url: url,
@@ -56,12 +62,12 @@ export const requestGet = util.promisify(request.get);
 
 export const checkHttp = async (
   url: string,
-  checkResponse: HttpResponseCheck
+  checkResponse: HttpResponseCheck,
 ): Promise<HttpCheckResult> =>
   await doCheckHttp(createOptions(url), requestGet, checkResponse);
 
 export const checkHttpWithOptions = async (
   options: OptionsWithUrl,
-  checkResponse: HttpResponseCheck
+  checkResponse: HttpResponseCheck,
 ): Promise<HttpCheckResult> =>
   await doCheckHttp(options, requestGet, checkResponse);

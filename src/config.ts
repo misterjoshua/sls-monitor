@@ -1,4 +1,4 @@
-const getOrThrow = (name: string, value: string) => (): string => {
+const getOrThrow = (name: string, value: string | undefined) => (): string => {
   if (value === '' || value === undefined)
     throw new Error(`Cannot get ${name} as it is uninitialized`);
   return value;
@@ -6,21 +6,21 @@ const getOrThrow = (name: string, value: string) => (): string => {
 
 export const getMonitoringTasksTable = getOrThrow(
   'MonitoringTasksTable',
-  process.env.MonitoringTasksTable
+  process.env.MonitoringTasksTable,
 );
 export const getMonitoringTaskTopic = getOrThrow(
   'MonitoringTaskTopic',
-  process.env.MonitoringTaskTopic
+  process.env.MonitoringTaskTopic,
 );
 export const getPutStackTaskQueue = getOrThrow(
   'PutStackTaskQueue',
-  process.env.PutStackTaskQueue
+  process.env.PutStackTaskQueue,
 );
 export const getResourceUniqueString = getOrThrow(
   'ResourceUniqueString',
-  process.env.ResourceUniqueString
+  process.env.ResourceUniqueString,
 );
 export const getMonitoringAlertsTopicExportName = getOrThrow(
   'MonitoringAlertsTopicExportName',
-  process.env.MonitoringAlertsTopicExportName
+  process.env.MonitoringAlertsTopicExportName,
 );

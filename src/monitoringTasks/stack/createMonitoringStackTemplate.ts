@@ -26,7 +26,16 @@ const createAlarm = (task: MonitoringTask): object => ({
 });
 
 export function createMonitoringStackTemplate(tasks: MonitoringTask[]): object {
-  const template = {
+  interface Resources {
+    [x: string]: object;
+  }
+  interface Template {
+    AWSTemplateFormatVersion: string;
+    Description: string;
+    Resources: Resources;
+  }
+
+  const template: Template = {
     AWSTemplateFormatVersion: '2010-09-09',
     Description: 'Task Stack',
     Resources: {},

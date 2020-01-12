@@ -8,5 +8,4 @@ coverage
 package
 cdk.out
 .idea
-jest.config.js
-tsconfig.json
+.cache

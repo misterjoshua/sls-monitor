@@ -5,7 +5,7 @@ import { RequestSender, HttpCheckResult } from './checkHttp';
 export const doCheckHttp = async (
   options: request.OptionsWithUrl,
   sendRequest: RequestSender,
-  checkResponse: HttpResponseCheck
+  checkResponse: HttpResponseCheck,
 ): Promise<HttpCheckResult> => {
   try {
     const response = await sendRequest(options);

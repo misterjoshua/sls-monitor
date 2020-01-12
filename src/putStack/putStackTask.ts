@@ -8,7 +8,7 @@ export interface PutStackTask {
 
 export const putStackTask = async (
   stackName: string,
-  templateBody: string
+  templateBody: string,
 ): Promise<string> => {
   console.info(`Requesting to create ${stackName}:\n`, templateBody);
   const result = await CommonSQS.sendMessage({

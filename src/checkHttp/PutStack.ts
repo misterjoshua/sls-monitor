@@ -3,7 +3,7 @@ import * as sqs from '@aws-cdk/aws-sqs';
 import * as lambda from '@aws-cdk/aws-lambda';
 import * as lambdaEvents from '@aws-cdk/aws-lambda-event-sources';
 import * as iam from '@aws-cdk/aws-iam';
-import { CommonProps } from '../../cdk/stack';
+import { CommonProps } from '../cdk/Stack';
 
 interface PutStackProps extends CommonProps {
   queue: sqs.Queue;
@@ -16,9 +16,8 @@ export class PutStack extends cdk.Construct {
 
     const taskWorkerFn = new lambda.Function(this, 'TaskWorkerFn', {
       runtime: lambda.Runtime.NODEJS_12_X,
-      code: lambda.Code.fromAsset('./dist/src/putStack/lambda'),
-      handler: 'index.taskWorker',
-      layers: [props.baseLayer],
+      code: lambda.Code.fromAsset('./dist/putStack'),
+      handler: 'lambda.taskWorker',
       environment: {
         ResourceUniqueString: props.resourceUniqueString,
       },
@@ -28,7 +27,7 @@ export class PutStack extends cdk.Construct {
       new iam.PolicyStatement({
         actions: ['cloudwatch:*', 'cloudformation:*'],
         resources: ['*'],
-      })
+      }),
     );
   }
 }

@@ -19,7 +19,7 @@ export const MonitoringTaskModel = dynogels.define('MonitoringTask', {
 });
 
 export const putMonitoringTask = util.promisify<MonitoringTask, Item>(
-  MonitoringTaskModel.create
+  MonitoringTaskModel.create,
 );
 
 export const getMonitoringTasks = async (): Promise<MonitoringTask[]> => {
@@ -29,12 +29,12 @@ export const getMonitoringTasks = async (): Promise<MonitoringTask[]> => {
         if (err) reject(err);
         else resolve(data);
       });
-    }
+    },
   );
 
   return collection.Items.map((item: Document) => item.get() as MonitoringTask);
 };
 
 export const getMonitoringTask = util.promisify<string, Item>(
-  MonitoringTaskModel.get
+  MonitoringTaskModel.get,
 );

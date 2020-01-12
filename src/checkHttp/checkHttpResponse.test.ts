@@ -13,10 +13,10 @@ it('should check for success status codes', async () => {
   await expect(check({ statusCode: 200 } as any)).resolves.not.toThrow();
   await expect(check({ statusCode: 201 } as any)).rejects.toThrow();
   await expect(
-    defaultCheckHttpStatusCode({ statusCode: 200 } as any)
+    defaultCheckHttpStatusCode({ statusCode: 200 } as any),
   ).resolves.not.toThrow();
   await expect(
-    defaultCheckHttpStatusCode({ statusCode: 201 } as any)
+    defaultCheckHttpStatusCode({ statusCode: 201 } as any),
   ).rejects.toThrow();
 });
 
@@ -40,7 +40,7 @@ beforeEach(() => {
 
 it('should fail when provided a failing check in the sequence', async () => {
   await expect(
-    checkSequentially(successCheckMock)(requestMock)
+    checkSequentially(successCheckMock)(requestMock),
   ).resolves.not.toThrow();
 
   expect(successCheckMock).toHaveBeenCalled();
@@ -54,7 +54,7 @@ it('should run checks sequentially and fail if any check in the sequence fails',
   jest.clearAllMocks();
 
   await expect(
-    checkSequentially(successCheckMock, failCheckMock)(requestMock)
+    checkSequentially(successCheckMock, failCheckMock)(requestMock),
   ).rejects.toThrow();
 
   expect(successCheckMock).toHaveBeenCalled();
@@ -63,7 +63,7 @@ it('should run checks sequentially and fail if any check in the sequence fails',
 
 it('should not run checks after the first sequential check fail', async () => {
   await expect(
-    checkSequentially(failCheckMock, successCheckMock)(requestMock)
+    checkSequentially(failCheckMock, successCheckMock)(requestMock),
   ).rejects.toThrow();
 
   expect(failCheckMock).toHaveBeenCalled();
@@ -72,19 +72,19 @@ it('should not run checks after the first sequential check fail', async () => {
 
 it('it should check sucess and more checks', async () => {
   await expect(
-    checkHttpSuccessAnd(successCheckMock)({ statusCode: 200 } as any)
+    checkHttpSuccessAnd(successCheckMock)({ statusCode: 200 } as any),
   ).resolves.not.toThrow();
   expect(successCheckMock).toHaveBeenCalled();
 
   jest.clearAllMocks();
   await expect(
-    checkHttpSuccessAnd(successCheckMock)({ statusCode: 404 } as any)
+    checkHttpSuccessAnd(successCheckMock)({ statusCode: 404 } as any),
   ).rejects.toThrow();
   expect(successCheckMock).not.toHaveBeenCalled();
 
   jest.clearAllMocks();
   await expect(
-    checkHttpSuccessAnd(failCheckMock)({ statusCode: 200 } as any)
+    checkHttpSuccessAnd(failCheckMock)({ statusCode: 200 } as any),
   ).rejects.toThrow();
   expect(failCheckMock).toHaveBeenCalled();
 });

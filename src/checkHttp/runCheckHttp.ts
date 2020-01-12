@@ -6,14 +6,14 @@ import { MonitoringTask } from '../monitoringTasks';
 import { createDimensions, createMetricData } from '../cloudwatch';
 
 export const runCheckHttp = async (
-  task: MonitoringTask
+  task: MonitoringTask,
 ): Promise<HttpCheckResult> => {
   console.debug('Monitoring ', task);
 
   // Check the task url
   const checkResult = await checkHttp(
     task.url,
-    checkHttpSuccessAnd(regexpCheck(new RegExp(task.checkExpression)))
+    checkHttpSuccessAnd(regexpCheck(new RegExp(task.checkExpression))),
   );
 
   // Log the error.
@@ -22,7 +22,7 @@ export const runCheckHttp = async (
       "Check result indicates there's an error: ",
       checkResult.errorMessage,
       task,
-      checkResult
+      checkResult,
     );
   }
 

@@ -1,5 +1,8 @@
 import { Dimension } from 'aws-sdk/clients/cloudwatch';
-import { HttpCheckResult, HttpCheckTimingPhaseName } from '../checkHttp/checkHttp';
+import {
+  HttpCheckResult,
+  HttpCheckTimingPhaseName,
+} from '../checkHttp/checkHttp';
 import { createMetricData } from './createMetricData';
 
 const transportTimings = {
@@ -48,33 +51,40 @@ it('should create metric data for all http check results', () => {
     successChecks({
       successfulTransport: 1,
       successfulContentCheck: 1,
-    })
+    }),
   );
 
   expect(createMetricData(testDimensions, failedContentResult)).toEqual(
     successChecks({
       successfulTransport: 1,
       successfulContentCheck: 0,
-    })
+    }),
   );
 
   expect(createMetricData(testDimensions, failedTransportResult)).toEqual(
     successChecks({
       successfulTransport: 0,
       successfulContentCheck: 0,
-    })
+    }),
   );
 });
 
 it('should create metric data for all http timings', () => {
   expect(createMetricData(testDimensions, goodTestResult)).toEqual(
     expect.arrayContaining(
-      (['wait', 'dns', 'tcp', 'firstByte', 'download', 'total'] as HttpCheckTimingPhaseName[]).map(timing =>
+      ([
+        'wait',
+        'dns',
+        'tcp',
+        'firstByte',
+        'download',
+        'total',
+      ] as HttpCheckTimingPhaseName[]).map(timing =>
         expect.objectContaining({
           MetricName: timing,
           Value: transportTimings[timing],
-        })
-      )
-    )
+        }),
+      ),
+    ),
   );
 });

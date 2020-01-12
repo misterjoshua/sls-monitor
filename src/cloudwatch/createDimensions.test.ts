@@ -14,6 +14,6 @@ it('should create a dimension including the task name', () => {
         Name: 'TaskName',
         Value: testTask.name,
       }),
-    ])
+    ]),
   );
 });

@@ -1,4 +1,3 @@
-
 // Put prefixes before console.* functions so that search is easier in cloudwatch logs.
 export const bindLogPrefixes = (): void => {
   console.log = console.log.bind(null, '[LOG]');

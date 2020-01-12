@@ -6,13 +6,13 @@ import { bindLogPrefixes } from '../bindLogPrefixes';
 bindLogPrefixes();
 
 export const taskWorker: SQSHandler = async (
-  event: SQSEvent
+  event: SQSEvent,
 ): Promise<void> => {
   await Promise.all(
     event.Records.map(async record => {
       const task = parsePutStackTask(record.body);
       console.debug('task = ', task);
       await runPutStackTask(task);
-    })
+    }),
   );
 };

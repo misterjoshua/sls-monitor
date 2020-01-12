@@ -16,7 +16,7 @@ const getPutStackMode = async (stackName: string): Promise<PutStackMode> => {
 
     console.debug('stacks = ', stacks);
 
-    if (stacks.Stacks.length < 1) {
+    if (stacks.Stacks === undefined || stacks.Stacks.length < 1) {
       return 'create';
     }
 
@@ -39,7 +39,7 @@ async function deleteStack(stackName: string): Promise<void> {
 
 async function updateStack(
   stackName: string,
-  templateBody: string
+  templateBody: string,
 ): Promise<void> {
   try {
     await CommonCloudFormation.updateStack({
@@ -59,7 +59,7 @@ async function updateStack(
 
 async function createStack(
   stackName: string,
-  templateBody: string
+  templateBody: string,
 ): Promise<void> {
   await CommonCloudFormation.createStack({
     StackName: stackName,

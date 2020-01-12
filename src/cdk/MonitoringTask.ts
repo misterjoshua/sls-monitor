@@ -1,7 +1,7 @@
 import * as cdk from '@aws-cdk/core';
 import * as lambda from '@aws-cdk/aws-lambda';
 import * as lambdaEvents from '@aws-cdk/aws-lambda-event-sources';
-import { CommonProps } from '../../cdk/stack';
+import { CommonProps } from './Stack';
 import * as dynamodb from '@aws-cdk/aws-dynamodb';
 import * as events from '@aws-cdk/aws-events';
 import * as eventsTargets from '@aws-cdk/aws-events-targets';
@@ -44,13 +44,10 @@ export class MonitoringTask extends cdk.Construct {
     const restApiFn = new lambda.Function(this, 'CheckAllFn', {
       handler: 'index.restApi',
       runtime: lambda.Runtime.NODEJS_12_X,
-      code: lambda.Code.fromAsset('./dist/src/monitoringTasks/lambda'),
-      layers: [props.baseLayer],
+      code: lambda.Code.fromAsset('./dist/monitoringTasks'),
       environment,
       tracing: props.tracing,
-      events: [
-        new lambdaEvents.ApiEventSource("any", "/check")
-      ]
+      events: [new lambdaEvents.ApiEventSource('any', '/check')],
     });
     table.grantReadWriteData(restApiFn);
     props.checkTopic.grantPublish(restApiFn);
@@ -58,10 +55,9 @@ export class MonitoringTask extends cdk.Construct {
     // Add the check schedule.
 
     const scheduleWorkerFn = new lambda.Function(this, 'ScheduleWorkerFn', {
-      handler: 'index.scheduleWorker',
-      code: lambda.Code.fromAsset('./dist/src/monitoringTasks/lambda'),
+      handler: 'lambda.scheduleWorker',
+      code: lambda.Code.fromAsset('./dist/monitoringTasks'),
       runtime: lambda.Runtime.NODEJS_12_X,
-      layers: [props.baseLayer],
       environment,
       tracing: props.tracing,
     });
@@ -76,15 +72,12 @@ export class MonitoringTask extends cdk.Construct {
     // Reconcile Alarms API
 
     const reconcileRestApiFn = new lambda.Function(this, 'ReconcileRestApiFn', {
-      handler: 'index.reconcileRestApi',
-      code: lambda.Code.fromAsset('./dist/src/monitoringTasks/lambda'),
+      handler: 'lambda.reconcileRestApi',
+      code: lambda.Code.fromAsset('./dist/monitoringTasks'),
       runtime: lambda.Runtime.NODEJS_12_X,
-      layers: [props.baseLayer],
       environment,
       tracing: props.tracing,
-      events: [
-        new lambdaEvents.ApiEventSource("any", "/reconcile"),
-      ]
+      events: [new lambdaEvents.ApiEventSource('any', '/reconcile')],
     });
     props.putStackTaskQueue.grantSendMessages(reconcileRestApiFn);
     table.grantReadData(reconcileRestApiFn);
@@ -95,13 +88,12 @@ export class MonitoringTask extends cdk.Construct {
       this,
       'ReconcileScheduleFn',
       {
-        handler: 'index.reconcileScheduleWorker',
-        code: lambda.Code.fromAsset('./dist/src/monitoringTasks/lambda'),
+        handler: 'lambda.reconcileScheduleWorker',
+        code: lambda.Code.fromAsset('./dist/monitoringTasks'),
         runtime: lambda.Runtime.NODEJS_12_X,
-        layers: [props.baseLayer],
         environment,
         tracing: props.tracing,
-      }
+      },
     );
     props.putStackTaskQueue.grantSendMessages(reconcileScheduleFn);
     table.grantReadData(reconcileScheduleFn);

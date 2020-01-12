@@ -6,7 +6,7 @@ import { getMonitoringTasks } from '../dynogels';
 type MonitoringTaskStackResult = string[];
 
 const putMonitoringTaskStacks = async (
-  tasks: MonitoringTask[]
+  tasks: MonitoringTask[],
 ): Promise<MonitoringTaskStackResult> => {
   const template = createMonitoringStackTemplate(tasks);
 
@@ -14,7 +14,7 @@ const putMonitoringTaskStacks = async (
 
   const putStackTaskId = await putStackTask(
     `monitoring-tasks-stack`,
-    JSON.stringify(template)
+    JSON.stringify(template),
   );
 
   return [putStackTaskId];

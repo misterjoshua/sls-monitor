@@ -1,13 +1,12 @@
 import * as cdk from '@aws-cdk/core';
-import { HttpChecker } from '../src/checkHttp/cdk';
+import { HttpChecker } from './HttpChecker';
 import * as lambda from '@aws-cdk/aws-lambda';
 import * as sns from '@aws-cdk/aws-sns';
 import * as sqs from '@aws-cdk/aws-sqs';
-import { MonitoringTask } from '../src/monitoringTasks/cdk';
-import { PutStack } from '../src/putStack/cdk';
+import { MonitoringTask } from './MonitoringTask';
+import { PutStack } from '../checkHttp/PutStack';
 
 export interface CommonProps {
-  baseLayer: lambda.LayerVersion;
   checkTopic: sns.Topic;
   tracing: lambda.Tracing;
 }
@@ -15,10 +14,6 @@ export interface CommonProps {
 export class Stack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string) {
     super(scope, id);
-
-    const baseLayer = new lambda.LayerVersion(this, 'BaseLayer', {
-      code: lambda.Code.fromAsset('./dist/dependencies'),
-    });
 
     const checkTopic = new sns.Topic(this, 'CheckTopic');
     const deadTasks = new sqs.Queue(this, 'DeadTasksQueue');
@@ -31,7 +26,6 @@ export class Stack extends cdk.Stack {
     });
 
     const commonProps: CommonProps = {
-      baseLayer,
       checkTopic,
       tracing: lambda.Tracing.ACTIVE,
     };

@@ -1,13 +1,17 @@
-import { HttpCheckResult, HttpCheckTimingPhases, HttpCheckTimingPhaseName } from '../checkHttp/checkHttp';
+import {
+  HttpCheckResult,
+  HttpCheckTimingPhases,
+  HttpCheckTimingPhaseName,
+} from '../checkHttp/checkHttp';
 import { Dimension, MetricDatum, MetricData } from 'aws-sdk/clients/cloudwatch';
 
 export const createMetricData = (
   dimensions: Dimension[],
-  checkResult: HttpCheckResult
+  checkResult: HttpCheckResult,
 ): MetricData => {
   const createMetricDatum = (
     name: HttpCheckTimingPhaseName,
-    data: HttpCheckTimingPhases
+    data: HttpCheckTimingPhases,
   ): MetricDatum => ({
     MetricName: name,
     Unit: 'Milliseconds',

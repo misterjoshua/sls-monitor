@@ -12,6 +12,6 @@ export const snsWorker: SNSHandler = async (event: SNSEvent) => {
       const result = await runCheckHttp(task);
 
       console.debug(task, result);
-    })
+    }),
   );
 };

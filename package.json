@@ -3,26 +3,55 @@
   "author": "Josh Kellendonk",
   "version": "0.1.0",
   "license": "MIT",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
   "scripts": {
-    "start": "cdk-ez start",
-    "build": "cdk-ez build",
-    "test": "cdk-ez test",
-    "lint": "cdk-ez lint",
-    "lint:fix": "cdk-ez lint --fix",
-    "pre-commit": "CI=1 run-s lint:fix test"
+    "build": "parcel build -t node src/**/lambda.ts",
+    "lint:staged": "lint-staged",
+    "lint": "eslint --fix 'src/**/*'",
+    "test": "jest",
+    "typecheck": "tsc --noemit"
   },
   "peerDependencies": {},
   "husky": {
     "hooks": {
-      "pre-commit": "run-s pre-commit"
+      "pre-commit": "CI=1 run-s lint:staged test"
     }
   },
-  "module": "dist/http-monitor.esm.js",
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "tsc --noemit",
+      "git add"
+    ]
+  },
+  "prettier": {
+    "tabWidth": 2,
+    "printWidth": 80,
+    "singleQuote": true,
+    "trailingComma": "all"
+  },
+  "eslintConfig": {
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "prettier",
+      "@typescript-eslint"
+    ],
+    "rules": {
+      "prettier/prettier": "error"
+    },
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/eslint-recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:prettier/recommended"
+    ]
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "roots": [
+      "<rootDir>/src"
+    ]
+  },
   "devDependencies": {
     "@aws-cdk/aws-apigateway": "^1.20.0",
     "@aws-cdk/aws-cloudwatch": "^1.20.0",
@@ -42,10 +71,18 @@
     "@types/jest": "^24.0.25",
     "@types/node-fetch": "^2.5.4",
     "@types/request": "^2.48.4",
-    "cdk-ez": "^0.5.4",
+    "@typescript-eslint/eslint-plugin": "^2.15.0",
+    "@typescript-eslint/parser": "^2.15.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-plugin-prettier": "^3.1.2",
     "husky": "^3.1.0",
+    "jest": "^24.9.0",
+    "lint-staged": "^9.5.0",
     "npm-run-all": "^4.1.5",
-    "rollup": "^1.29.0"
+    "prettier": "^1.19.1",
+    "ts-jest": "^24.3.0",
+    "typescript": "^3.7.4"
   },
   "dependencies": {
     "aws-sdk": "^2.600.0",

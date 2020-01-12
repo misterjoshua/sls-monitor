@@ -3,7 +3,7 @@ import { MonitoringTask } from '../index';
 import { getMonitoringTaskTopic } from '../../config';
 
 export const publishMonitoringTask = async (
-  monitoringTask: MonitoringTask
+  monitoringTask: MonitoringTask,
 ): Promise<string> => {
   console.debug('publishMonitoringTask = ', monitoringTask);
 
@@ -13,5 +13,5 @@ export const publishMonitoringTask = async (
     Message: JSON.stringify(monitoringTask),
   }).promise();
 
-  return result.MessageId;
+  return result.MessageId || '';
 };

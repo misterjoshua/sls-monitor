@@ -37,7 +37,7 @@ it('should call checkHttp with a request', async () => {
   expect(doCheckHttpMock).toBeCalledWith(
     expect.objectContaining({ url: testUrl }),
     expect.any(Function),
-    expect.any(Function)
+    expect.any(Function),
   );
 });
 
@@ -50,6 +50,6 @@ it('should pass the options through to doCheckHttp', async () => {
   expect(doCheckHttpMock).toBeCalledWith(
     expect.objectContaining(options),
     expect.any(Function),
-    expect.any(Function)
+    expect.any(Function),
   );
 });
