@@ -5,15 +5,16 @@ import * as cloudwatch from '@aws-cdk/aws-cloudwatch';
 import { CommonProps } from './Stack';
 
 export class HttpChecker extends cdk.Construct {
-  constructor(scope: cdk.Construct, id: string, common: CommonProps) {
+  constructor(scope: cdk.Construct, id: string, props: CommonProps) {
     super(scope, id);
 
     const snsWorker = new lambda.Function(this, 'SnsWorkerFn', {
       runtime: lambda.Runtime.NODEJS_12_X,
       handler: 'lambda.snsWorker',
       code: lambda.Code.fromAsset('./dist/checkHttp'),
-      tracing: common.tracing,
-      events: [new lambdaEvents.SnsEventSource(common.checkTopic)],
+      layers: [props.nodeModulesLayer],
+      tracing: props.tracing,
+      events: [new lambdaEvents.SnsEventSource(props.checkTopic)],
     });
     cloudwatch.Metric.grantPutMetricData(snsWorker);
   }

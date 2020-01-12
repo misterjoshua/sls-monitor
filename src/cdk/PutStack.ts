@@ -3,7 +3,7 @@ import * as sqs from '@aws-cdk/aws-sqs';
 import * as lambda from '@aws-cdk/aws-lambda';
 import * as lambdaEvents from '@aws-cdk/aws-lambda-event-sources';
 import * as iam from '@aws-cdk/aws-iam';
-import { CommonProps } from '../cdk/Stack';
+import { CommonProps } from './Stack';
 
 interface PutStackProps extends CommonProps {
   queue: sqs.Queue;
@@ -17,6 +17,7 @@ export class PutStack extends cdk.Construct {
     const taskWorkerFn = new lambda.Function(this, 'TaskWorkerFn', {
       runtime: lambda.Runtime.NODEJS_12_X,
       code: lambda.Code.fromAsset('./dist/putStack'),
+      layers: [props.nodeModulesLayer],
       handler: 'lambda.taskWorker',
       environment: {
         ResourceUniqueString: props.resourceUniqueString,

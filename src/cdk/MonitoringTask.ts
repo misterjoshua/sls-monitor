@@ -42,9 +42,10 @@ export class MonitoringTask extends cdk.Construct {
     };
 
     const restApiFn = new lambda.Function(this, 'CheckAllFn', {
-      handler: 'index.restApi',
+      handler: 'lambda.restApi',
       runtime: lambda.Runtime.NODEJS_12_X,
       code: lambda.Code.fromAsset('./dist/monitoringTasks'),
+      layers: [props.nodeModulesLayer],
       environment,
       tracing: props.tracing,
       events: [new lambdaEvents.ApiEventSource('any', '/check')],
@@ -57,6 +58,7 @@ export class MonitoringTask extends cdk.Construct {
     const scheduleWorkerFn = new lambda.Function(this, 'ScheduleWorkerFn', {
       handler: 'lambda.scheduleWorker',
       code: lambda.Code.fromAsset('./dist/monitoringTasks'),
+      layers: [props.nodeModulesLayer],
       runtime: lambda.Runtime.NODEJS_12_X,
       environment,
       tracing: props.tracing,
@@ -74,6 +76,7 @@ export class MonitoringTask extends cdk.Construct {
     const reconcileRestApiFn = new lambda.Function(this, 'ReconcileRestApiFn', {
       handler: 'lambda.reconcileRestApi',
       code: lambda.Code.fromAsset('./dist/monitoringTasks'),
+      layers: [props.nodeModulesLayer],
       runtime: lambda.Runtime.NODEJS_12_X,
       environment,
       tracing: props.tracing,
@@ -90,6 +93,7 @@ export class MonitoringTask extends cdk.Construct {
       {
         handler: 'lambda.reconcileScheduleWorker',
         code: lambda.Code.fromAsset('./dist/monitoringTasks'),
+        layers: [props.nodeModulesLayer],
         runtime: lambda.Runtime.NODEJS_12_X,
         environment,
         tracing: props.tracing,
